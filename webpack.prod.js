@@ -11,15 +11,16 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const AssetsPlugin = require('assets-webpack-plugin');
 
+// config
 const config = require('./webpack.base');
 const {
 	ASSETS_DIR,
 	BUILD_PUBLIC_PATH
 } = require('./config');
-
 const OUTPUT_DIR = resolve(__dirname, ASSETS_DIR)
 
 clearAssetsDir();
+
 
 // set mode
 config.mode = 'production'
@@ -32,7 +33,6 @@ config.output = {
 	publicPath: BUILD_PUBLIC_PATH,
 	
 	// fingerprinting
-	// filename: 'bundle.[chunkhash].js',
 	filename: '[name].[chunkhash].js',
 	chunkFilename: '[name].[chunkhash].js'
 };
@@ -41,24 +41,29 @@ config.output = {
 
 // css
 const extractRegularCSS = new ExtractTextPlugin({
-	// filename: '[name].[contenthash].css',
 	filename: 'main.[contenthash].css',
-	// filename: 'main.css',
 
 	// combines chunked css into main css
 	allChunks: true,
 });
 
-
+// optimizations (uglify + chunk splitting)
 config.optimization = {
-	minimize: false,
+	// minimize: false, // for debugging
 	splitChunks: {
 		cacheGroups: {
+			// splits node_module dependencies into separate vendor chunk
 			vendors: {
-                test: /[\\/]node_modules[\\/]/,
-                name: 'vendor',
-                chunks: 'all'
-            }
+				test: /[\\/]node_modules[\\/]/,
+				name: 'vendor',
+				chunks: 'initial'
+			},
+			/*otherChunk: {
+				test: (module, chunk) => {
+					module.context // path of module
+					module.resource // module file
+				},
+			}*/
 		}
 	}
 };
@@ -67,64 +72,6 @@ config.optimization = {
 [].push.apply(config.plugins, [
 	// extract css
 	extractRegularCSS,
-
-	// create vendor bundle
-	/*
-		NOTE - this doesn't capture node_modules used in split chunks
-		so any `bundle-loader` or `require.ensure`/`import` chunks won't 
-		pull out node_modules
-	*/
-	/*new webpack.optimize.SplitChunksPlugin({
-		name: 'vendor',
-		filename: 'vendor.[chunkhash].js',
-		minChunks: ({ resource }) => /node_modules/.test(resource),
-	}),*/
-
-	/*new webpack.optimize.SplitChunksPlugin({
-		chunks: "async",
-		// minSize: 30000,
-		// minChunks: 1,
-		// maxAsyncRequests: 5,
-		// maxInitialRequests: 3,
-		// name: true,
-		cacheGroups: {
-			// default: {
-			// 	minChunks: 2,
-			// 	priority: -20
-			// 	reuseExistingChunk: true,
-			// },
-			vendors: {
-				test: /[\\/]node_modules[\\/]/,
-				name: "vendors",
-				chunks: "all"
-				// priority: -10
-			}
-		}
-	}),*/
-
-	// ************* async packages ***************
-
-	/*
-		NOTES
-		- uses async, meaning that webpack will only search through async
-		split modules for packages and will create an async common package
-	*/
-	/*new webpack.optimize.SplitChunksPlugin({
-		async: 'react-dnd',
-		// filename: 'react-dnd.[chunkhash].js',
-		minChunks(module, count) {
-			var context = module.context;
-			var targets = ['react-dnd', 'react-dnd-html5-backend', 'dnd-core']
-			return context && context.indexOf('node_modules') >= 0 && targets.find(t => context.indexOf(t) > -1)
-		},
-	}),*/
-
-	/*new webpack.optimize.SplitChunksPlugin({
-		async: 'used-twice',
-		minChunks(module, count) {
-			return count >= 2;
-		},
-	}),*/
 
 	// retains hashnames for unmodified chunks 
 	new webpack.HashedModuleIdsPlugin(),
@@ -142,12 +89,6 @@ config.optimization = {
 		// path: resolve(__dirname, 'assets')
 		path: OUTPUT_DIR
 	}),
-
-	// uglify
-	/*new webpack.optimize.UglifyJsPlugin({
-		sourceMap: true,
-		comments: false
-	}),*/
 ]);
 
 if (process.env.NODE_ANALYZE){
@@ -231,10 +172,6 @@ function copyHTML(){
 			return console.log(err);
 		}
 
-		console.log("------------------_");
-		console.log(JSON.stringify(manifest, null, 4));
-		console.log("------------------_");
-		
 		let result = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
 		if (manifest.vendor){
 			result = result.replace(/<!-- VENDOR_JS -->/, createScript(manifest.vendor.js))

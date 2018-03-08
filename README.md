@@ -9,6 +9,7 @@ Supports:
 - mobx
 - scss
 - lazy loading components
+	- see `src/components/lazy-loader` for info
 - linting
 
 Perfect for single page applications that communicate with an API.
@@ -26,3 +27,12 @@ To change config for development/builds - see `config/index.js`.
 
 ### Production
 - `npm run build`
+
+### Debugging
+- `npm run analyze`
+	- will run build and display bundles
+	- see [bundle analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer) for more info
+
+
+## TODO
+- update dependencies once `babel` and `extract-text-webpack-plugin` leave beta
