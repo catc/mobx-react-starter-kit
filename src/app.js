@@ -1,15 +1,52 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import { Provider, observer } from 'mobx-react';
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom'
+
 import 'styles/main.scss';
 
+// stores
+import ModalStore from 'store/modal';
+
+// components
+import ModalWrapper from 'components/common/modal/modal-wrapper';
+
+// routes
 import CompOne from 'components/comp-one'
 
+// If you use React Router, make this component
+// render <Router> with your routes. Currently,
+// only synchronous routes are hot reloaded, and
+// you will see a warning from <Router> on every reload.
+// You can ignore this warning. For details, see:
+// https://github.com/reactjs/react-router/issues/2182
+@observer
 export default class App extends Component {
 	render(){
 		return (
-			<div>
-				hello world!
-				<CompOne/>
-			</div>
+			<Router>
+				<Provider
+					modalStore={ModalStore}
+					// other stores...
+				>
+					<Fragment>
+						<div>
+							<nav>
+								<Link to="/">Home</Link>
+								<Link to="/comp-one">Component 1</Link>
+							</nav>
+
+							{/* can place routes here */}
+							<Switch>
+								<Route path="/comp-one" component={CompOne}/>
+								{/* other routes */}
+							</Switch>
+						</div>
+
+						{/* other stuff - ie: modal, growls, etc */}
+						<ModalWrapper/>
+					</Fragment>
+				</Provider>
+			</Router>
 		)
 	}
 }

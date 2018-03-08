@@ -64,7 +64,7 @@ const config = {
 			styles: 'src/styles',
 			routes: 'src/routes',
 			utils: 'src/utils',
-			// store: 'src/store',
+			store: 'src/store',
 		}
 	},
 
