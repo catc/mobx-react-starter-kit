@@ -1,0 +1,25 @@
+{
+   "scripts": {
+      "dev": "node webpack.dev.js",
+      "build": "NODE_ENV=production node webpack.prod.js",
+      "analyze": "NODE_ANALYZE=true node webpack.prod.js"
+   },
+   "engineStrict": true,
+   "engines": {
+      "node": "8.9.4"
+   },
+   "dependencies": {
+      "prop-types": "^15.6.1",
+      "react": "^16.2.0",
+      "react-dom": "^16.2.0"
+   },
+   "devDependencies": {
+      "@babel/core": "^7.0.0-beta.40",
+      "@babel/preset-env": "^7.0.0-beta.40",
+      "@babel/preset-react": "^7.0.0-beta.40",
+      "babel-loader": "^8.0.0-beta.0",
+      "react-hot-loader": "^4.0.0",
+      "webpack": "^4.1.1",
+      "webpack-dev-server": "^3.1.0"
+   }
+}
