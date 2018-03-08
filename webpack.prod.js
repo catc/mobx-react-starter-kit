@@ -11,8 +11,13 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const AssetsPlugin = require('assets-webpack-plugin');
 
-const config = require('./webpack.config.base');
-const ASSETS_DIR = resolve(__dirname, '../static/assets')
+const config = require('./webpack.base');
+const {
+	ASSETS_DIR,
+	BUILD_PUBLIC_PATH
+} = require('./config');
+
+const OUTPUT_DIR = resolve(__dirname, ASSETS_DIR)
 
 clearAssetsDir();
 
@@ -21,10 +26,10 @@ config.mode = 'production'
 
 config.output = {
 	// path: config.output.path,
-	path: ASSETS_DIR,
+	path: OUTPUT_DIR,
 
 	// required for chunks to be loaded from `/assets/` dir correctly
-	publicPath: '/assets/',
+	publicPath: BUILD_PUBLIC_PATH,
 	
 	// fingerprinting
 	// filename: 'bundle.[chunkhash].js',
@@ -45,6 +50,19 @@ const extractRegularCSS = new ExtractTextPlugin({
 });
 
 
+config.optimization = {
+	minimize: false,
+	splitChunks: {
+		cacheGroups: {
+			vendors: {
+                test: /[\\/]node_modules[\\/]/,
+                name: 'vendor',
+                chunks: 'all'
+            }
+		}
+	}
+};
+
 // add build plugins
 [].push.apply(config.plugins, [
 	// extract css
@@ -56,11 +74,33 @@ const extractRegularCSS = new ExtractTextPlugin({
 		so any `bundle-loader` or `require.ensure`/`import` chunks won't 
 		pull out node_modules
 	*/
-	new webpack.optimize.CommonsChunkPlugin({
+	/*new webpack.optimize.SplitChunksPlugin({
 		name: 'vendor',
 		filename: 'vendor.[chunkhash].js',
 		minChunks: ({ resource }) => /node_modules/.test(resource),
-	}),
+	}),*/
+
+	/*new webpack.optimize.SplitChunksPlugin({
+		chunks: "async",
+		// minSize: 30000,
+		// minChunks: 1,
+		// maxAsyncRequests: 5,
+		// maxInitialRequests: 3,
+		// name: true,
+		cacheGroups: {
+			// default: {
+			// 	minChunks: 2,
+			// 	priority: -20
+			// 	reuseExistingChunk: true,
+			// },
+			vendors: {
+				test: /[\\/]node_modules[\\/]/,
+				name: "vendors",
+				chunks: "all"
+				// priority: -10
+			}
+		}
+	}),*/
 
 	// ************* async packages ***************
 
@@ -69,7 +109,7 @@ const extractRegularCSS = new ExtractTextPlugin({
 		- uses async, meaning that webpack will only search through async
 		split modules for packages and will create an async common package
 	*/
-	/*new webpack.optimize.CommonsChunkPlugin({
+	/*new webpack.optimize.SplitChunksPlugin({
 		async: 'react-dnd',
 		// filename: 'react-dnd.[chunkhash].js',
 		minChunks(module, count) {
@@ -79,12 +119,12 @@ const extractRegularCSS = new ExtractTextPlugin({
 		},
 	}),*/
 
-	new webpack.optimize.CommonsChunkPlugin({
+	/*new webpack.optimize.SplitChunksPlugin({
 		async: 'used-twice',
 		minChunks(module, count) {
 			return count >= 2;
 		},
-	}),
+	}),*/
 
 	// retains hashnames for unmodified chunks 
 	new webpack.HashedModuleIdsPlugin(),
@@ -100,7 +140,7 @@ const extractRegularCSS = new ExtractTextPlugin({
 	new AssetsPlugin({
 		filename: 'manifest.json',
 		// path: resolve(__dirname, 'assets')
-		path: ASSETS_DIR
+		path: OUTPUT_DIR
 	}),
 
 	// uglify
@@ -181,18 +221,24 @@ webpack(config, (err, stats) => {
 })
 
 function copyHTML(){
-	const manifest = require(resolve(ASSETS_DIR, 'manifest.json'));
+	const manifest = require(resolve(OUTPUT_DIR, 'manifest.json'));
 	
 	// copy `index.html` to /dist
 	const HTML_ENTRY = resolve(__dirname, 'index.html');
-	const HTML_OUTPUT = resolve(ASSETS_DIR, 'index.html');
+	const HTML_OUTPUT = resolve(OUTPUT_DIR, 'index.html');
 	readFile(HTML_ENTRY, 'utf8', function(err, html) {
 		if (err) {
 			return console.log(err);
 		}
+
+		console.log("------------------_");
+		console.log(JSON.stringify(manifest, null, 4));
+		console.log("------------------_");
 		
 		let result = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
-		result = result.replace(/<!-- VENDOR_JS -->/, createScript(manifest.vendor.js))
+		if (manifest.vendor){
+			result = result.replace(/<!-- VENDOR_JS -->/, createScript(manifest.vendor.js))
+		}
 		result = result.replace(/<!-- BUNDLE_JS -->/, createScript(manifest.bundle.js))
 		result = result.replace(/<!-- BUNDLE_CSS -->/, createStylesheet(manifest.bundle.css))
 
@@ -213,18 +259,18 @@ function copyHTML(){
 
 function clearAssetsDir(){
 	try {
-		if (lstatSync(ASSETS_DIR)){
-			// remove everything in ./assets
-			console.log(`Removing everything in "${ASSETS_DIR}"...`)
-			readdirSync(ASSETS_DIR)
+		if (lstatSync(OUTPUT_DIR)){
+			// remove everything in output directory
+			console.log(`Removing everything in "${OUTPUT_DIR}"...`)
+			readdirSync(OUTPUT_DIR)
 				.forEach(filename => {
-					const filepath = resolve(ASSETS_DIR, filename)
+					const filepath = resolve(OUTPUT_DIR, filename)
 					if (lstatSync(filepath).isFile()){
 						unlinkSync(filepath)
 					}
 				})
 		}
 	} catch (err){
-		mkdirSync(ASSETS_DIR);
+		mkdirSync(OUTPUT_DIR);
 	}
 }
