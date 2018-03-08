@@ -3,13 +3,15 @@ const webpack = require('webpack');
 const config = require('./webpack.base');
 const devServer = require('webpack-dev-server');
 
-const PORT = 7005;
-const PUBLIC_PATH = '/assets/';
+const {
+	DEV_SERVER_PORT,
+	PUBLIC_PATH,
+	EXTERNAL_PROXY_PORT
+} = require('./config');
 const ROOT = resolve(__dirname);
-const EXTERNAL_PROXY_PORT = 2222;
 
 // set mode
-config.mode = 'development'
+config.mode = 'development';
 
 // add hmr plugins
 [].push.apply(config.plugins, [
@@ -39,7 +41,7 @@ function constructHMREntry(entry){
 
 		// bundle the client for webpack-dev-server
 		// and connect to the provided endpoint
-		`webpack-dev-server/client?http://localhost:${PORT}`,
+		`webpack-dev-server/client?http://localhost:${DEV_SERVER_PORT}`,
 
 		// bundle the client for hot reloading
 		// only- means to only hot reload for successful updates
@@ -51,8 +53,7 @@ function constructHMREntry(entry){
 
 
 // css
-/*config.module.rules[1].use.unshift('style-loader');
-config.module.rules[1].use.unshift('react-hot-loader/webpack')*/
+config.module.rules[1].use.unshift('style-loader');
 
 
 // necessary for HMR to know where to load the hot update chunks
@@ -85,9 +86,9 @@ const devServerConfig = {
 
 
 // start server
-new devServer(webpack(config), devServerConfig).listen(PORT, '0.0.0.0', err => {
+new devServer(webpack(config), devServerConfig).listen(DEV_SERVER_PORT, '0.0.0.0', err => {
 	if (err){
 		throw new Error('webpack dev server error', err);
 	}
-	console.log(`Webpack dev server listening on port ${PORT}`);
+	console.log(`Webpack dev server listening on port ${DEV_SERVER_PORT}`);
 });

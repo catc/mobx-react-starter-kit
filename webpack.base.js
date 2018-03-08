@@ -1,20 +1,13 @@
 const { resolve } = require('path');
-
-// TODO - constants to config/
-const FILE_NAME = 'bundle.js';
-const BUILD_PATH = resolve(__dirname, '../assets');
+const { FILE_NAME } = require('./config');
 
 const config = {
 	context: resolve(__dirname),
-	
-	// entry: 'src/index.js',
 	entry: {
 		bundle: 'src/index.js',
 	},
 	output: {
-		// filename: FILE_NAME,
 		filename: '[name].js',
-		// path: BUILD_PATH,
 	},
 
 	module: {
@@ -30,7 +23,7 @@ const config = {
 					}
 				]
 			},
-			/*{
+			{
 				test: /\.(s?)css$/,
 				use: [
 					{
@@ -56,7 +49,7 @@ const config = {
 						}
 					},
 				]
-			}*/
+			}
 		]
 	},
 
@@ -67,11 +60,11 @@ const config = {
 		alias: {
 			src: resolve(__dirname, 'src'),
 			components: 'src/components',
-			/*routes: 'src/routes',
 			api: 'src/api',
-			store: 'src/store',
-			styles: 'src/scss',
-			utils: 'src/utils',*/
+			styles: 'src/styles',
+			routes: 'src/routes',
+			utils: 'src/utils',
+			// store: 'src/store',
 		}
 	},
 
