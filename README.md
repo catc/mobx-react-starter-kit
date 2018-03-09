@@ -24,6 +24,7 @@ To change config for development/builds - see `config/index.js`.
 
 ### Development
 - `npm run dev` and navigate to `localhost:7005`
+- to configure server proxy, see `devServerConfig` in `webpack.dev.js`
 
 ### Production
 - `npm run build`
@@ -33,6 +34,7 @@ To change config for development/builds - see `config/index.js`.
 	- will run build and display bundles
 	- see [bundle analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer) for more info
 
+--------------
 
 ## TODO
 - update dependencies once `babel` and `extract-text-webpack-plugin` leave beta

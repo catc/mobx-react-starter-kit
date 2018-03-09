@@ -8,11 +8,11 @@ import ReactDOM from 'react-dom';
 import App from './app';
 
 // budget bluebird
-/*window.pHash = obj => {
+window.Promise.hash = obj => {
 	return Promise.all(Object.values(obj)).then(promises => {
 		return Object.keys(obj).reduce((o, key, i) => (o[key] = promises[i], o), {});
 	})
-}*/
+}
 
 const render = Component => {
 	ReactDOM.render(

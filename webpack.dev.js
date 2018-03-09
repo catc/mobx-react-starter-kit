@@ -74,11 +74,12 @@ const devServerConfig = {
 	clientLogLevel: 'warning',
 
 	proxy: {
+		// static route for files
 		'/static/': {
 			target: `http://localhost:${EXTERNAL_PROXY_PORT}`,
 		},
-		// TODO - eventually rename route prefix from `/s` to `/api`
-		'/s/': {
+		// anything prefixed with api, redirect to server
+		'/api/': {
 			target: `http://localhost:${EXTERNAL_PROXY_PORT}`,
 		}
 	}
