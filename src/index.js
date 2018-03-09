@@ -1,3 +1,7 @@
+import foo from '@babel/polyfill';
+import { useStrict } from 'mobx'
+useStrict(true)
+
 import { AppContainer } from 'react-hot-loader';
 import React from 'react';
 import ReactDOM from 'react-dom';
