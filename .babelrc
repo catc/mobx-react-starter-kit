@@ -11,6 +11,8 @@
 	],
 
 	plugins: [
+		'@babel/plugin-transform-runtime',
+		'@babel/plugin-transform-regenerator',
 		'@babel/plugin-syntax-dynamic-import',
 		'@babel/plugin-proposal-decorators',
 		['@babel/plugin-proposal-class-properties', { "loose" : true }],
