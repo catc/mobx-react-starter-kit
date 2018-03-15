@@ -37,4 +37,7 @@ To change config for development/builds - see `config/index.js`.
 --------------
 
 ## TODO
-- update dependencies once `babel` and `extract-text-webpack-plugin` leave beta
+- update dependencies once `babel` and `extract-text-webpack-plugin` when they leave beta
+- add test support (jest)
+- add typescript support
+

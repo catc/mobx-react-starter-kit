@@ -28,7 +28,6 @@ config.mode = 'development';
 // add HMR stuff to entry
 if (typeof config.entry === 'object'){
 	Object.keys(config.entry).forEach(entryKey => {
-		const val = config.entry[entryKey]
 		config.entry[entryKey] = constructHMREntry(config.entry[entryKey])
 	})
 } else if (typeof config.entry === 'string'){

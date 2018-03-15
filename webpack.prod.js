@@ -73,7 +73,7 @@ config.optimization = {
 	// extract css
 	extractRegularCSS,
 
-	// retains hashnames for unmodified chunks 
+	// retains hashnames for unmodified chunks
 	new webpack.HashedModuleIdsPlugin(),
 
 	// define env variables
@@ -86,7 +86,6 @@ config.optimization = {
 	// generate manifest
 	new AssetsPlugin({
 		filename: 'manifest.json',
-		// path: resolve(__dirname, 'assets')
 		path: OUTPUT_DIR
 	}),
 ]);
