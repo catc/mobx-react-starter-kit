@@ -1,5 +1,4 @@
 const { resolve } = require('path');
-const { FILE_NAME } = require('./config');
 
 const config = {
 	context: resolve(__dirname),
@@ -13,15 +12,9 @@ const config = {
 	module: {
 		rules: [
 			{
-				test: /\.js(x?)$/,
+				test: /\.(ts|js)x?$/,
 				exclude: /(node_modules|bower_components)/,
-				use: [
-					{
-						loader: 'babel-loader',
-						// options specified in `.babelrc`
-						options: {}
-					}
-				]
+				use: 'awesome-typescript-loader'
 			},
 			{
 				test: /\.(s?)css$/,
@@ -56,7 +49,7 @@ const config = {
 	plugins: [],
 
 	resolve: {
-		extensions: ['.js', '.jsx'],
+		extensions: ['.ts', '.tsx', '.js', '.jsx'],
 		alias: {
 			src: resolve(__dirname, 'src'),
 			components: 'src/components',

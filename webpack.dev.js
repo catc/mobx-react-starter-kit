@@ -2,6 +2,7 @@ const { resolve } = require('path');
 const webpack = require('webpack');
 const config = require('./webpack.base');
 const devServer = require('webpack-dev-server');
+const { CheckerPlugin } = require('awesome-typescript-loader');
 
 const {
 	DEV_SERVER_PORT,
@@ -12,6 +13,9 @@ const ROOT = resolve(__dirname);
 
 // set mode
 config.mode = 'development';
+// source map
+config.devtool = 'source-map';
+// config.devtool = 'inline-source-map';
 
 // add hmr plugins
 [].push.apply(config.plugins, [
@@ -23,6 +27,9 @@ config.mode = 'development';
 
 	// do not emit compiled assets that include errors
 	new webpack.NoEmitOnErrorsPlugin(),
+
+	// async error reporting
+	new CheckerPlugin()
 ]);
 
 // add HMR stuff to entry
