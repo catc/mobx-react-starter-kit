@@ -3,6 +3,7 @@
 Supports:
 - react router
 - hot reloading (in dev)
+- typescript
 - es6/es7 support
 	- decorators
 	- class properties
@@ -39,5 +40,3 @@ To change config for development/builds - see `config/index.js`.
 ## TODO
 - update dependencies once `babel` and `extract-text-webpack-plugin` when they leave beta
 - add test support (jest)
-- add typescript support
-
