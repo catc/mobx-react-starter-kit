@@ -1,8 +1,5 @@
 {
 	"awesomeTypescriptLoaderOptions": {
-		// "useBabel": true,
-		// "babelCore": "@babel/core"
-
 		"useCache": true,
 		"forceIsolatedModules": true,
 		"reportFiles": true
@@ -12,9 +9,6 @@
 		"scripts",
 		"node_modules"
 	],
-	// "include": [
-	// 	"./src/**/*"
- //    ],
 
 	"compilerOptions": {
 		/* Basic Options */
