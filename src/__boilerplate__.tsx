@@ -8,8 +8,8 @@ import P from 'prop-types';
 	session: stores.sessionStore,
 }))*/
 @observer
-export default class MY_COMPONENT extends Component {
-	constructor(props){
+export default class MY_COMPONENT extends Component<Props, {}> {
+	constructor(props: Props){
 		super(props)
 	}
 
@@ -30,3 +30,21 @@ export default class MY_COMPONENT extends Component {
 MY_COMPONENT.propTypes = {
 	
 }
+
+export interface Props {
+	someProp: string;
+}
+
+
+// -----------
+
+// stateless
+function OTHER_COMPONENT({someProp}: Props){
+	return (
+		<div>
+			component
+		</div>
+	)
+}
+
+export default OTHER_COMPONENT
