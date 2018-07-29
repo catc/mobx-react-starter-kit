@@ -13,11 +13,6 @@ export default class MY_COMPONENT extends Component<Props, {}> {
 		super(props)
 	}
 
-	/*@action.bound
-	async yourAction() {
-		// ...
-	}*/
-
 	render(){
 		return (
 			<div>
