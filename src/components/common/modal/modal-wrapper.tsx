@@ -1,13 +1,10 @@
 import './style.scss';
-import React, { Component, ReactChild, ReactChildren } from 'react';
-import PropTypes from 'prop-types';
-import { withRouter } from 'react-router'
+import React, { Component, ReactChildren } from 'react';
 import { createPortal } from 'react-dom'
-
-import { observable, action, computed } from 'mobx';
+import { observable, action } from 'mobx';
 import { observer } from 'mobx-react';
 import { withRouter } from 'react-router'
-// import { observer, inject, PropTypes as MPropTypes } from 'mobx-react';
+import { History } from 'node_modules/@types/history';
 
 import { wait } from 'utils/async'
 
@@ -15,7 +12,12 @@ const CLOSE_DURATION = 300
 const MODAL_CONTAINER_CLASS = '.modal-container'
 let SCROLL_BAR_WIDTH: null | number = null
 
-interface OpenModalOptions {
+interface ChildComponentProps {
+	close?: () => void
+	history: History
+}
+
+export interface OpenModalOptions {
 	autoShow?: boolean;
 	center?: boolean;
 	animation?: string;
@@ -42,17 +44,17 @@ function selectAnimation(animation?: string) {
 export default function newModal(options: OpenModalOptions = {}) {
 	return (ModalContent: ReactChildren) => {
 		@observer
-		class Modal extends Component {
+		class Modal extends Component<ChildComponentProps, {}> {
 			@observable isVisible = false;
 			// @observable classes = '';
 			@observable anim = selectAnimation();
 			// @observable dialogStyles = {};
 			@observable contentWrapperClass = '';
 			@observable center = false;
-			historyListen: () => void;
+			historyListen?: () => void;
 
-			bg: HTMLElement = null
-			content: HTMLElement = null
+			bg!: HTMLElement;
+			content!: HTMLElement;
 
 			componentDidMount(){
 				this._scroll()
@@ -94,13 +96,13 @@ export default function newModal(options: OpenModalOptions = {}) {
 				if (modals.length === 1){
 					// if this is the last modal left open, remove no scroll
 					document.documentElement.classList.remove('no-scroll')
-					document.documentElement.style.paddingRight = 0
+					document.documentElement.style.paddingRight = `0`
 				}
 			}
-			
+
 			@action async _initialShow(){
 				await wait(0)
-				this.bg.style.opacity = 0.85
+				this.bg.style.opacity = `0.85`
 
 				// if `autoshow` was set, just display modal content
 				// immediately with options passed to decorator
@@ -128,8 +130,8 @@ export default function newModal(options: OpenModalOptions = {}) {
 
 			@action closeModal = async () => {
 				// animate and close
-				this.content.style.opacity = 0
-				this.bg.style.opacity = 0
+				this.content.style.opacity = `0`
+				this.bg.style.opacity = `0`
 
 				await wait(CLOSE_DURATION)
 
@@ -182,13 +184,6 @@ export default function newModal(options: OpenModalOptions = {}) {
 		return withRouter(Modal);
 	}
 }
-
-/* Modal.propTypes = {
-	setClasses: PropTypes.func.isRequired, // used by decorator
-	showContent: PropTypes.func.isRequired, // bound by decorator and passed down
-	updateHeight: PropTypes.func.isRequired, // bound by decorator and passed down
-	closeModal: PropTypes.func.isRequired, // just passed down
-} */
 
 function calcScrollBarWidth(): number {
 	const scrollDiv = document.createElement('div');
