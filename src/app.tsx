@@ -4,14 +4,11 @@ import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom'
 
 import 'styles/main.scss';
 
-// stores
-import ModalStore from 'store/modal';
-
 // components
-import ModalWrapper from 'components/common/modal/modal-wrapper';
+import ModalContainer from 'components/common/modal/modal-container'
 
 // routes
-import CompOne from 'components/comp-one'
+import Home from 'routes/home/index'
 
 // If you use React Router, make this component
 // render <Router> with your routes. Currently,
@@ -25,25 +22,23 @@ export default class App extends Component {
 		return (
 			<Router>
 				<Provider
-					modalStore={ModalStore}
-					// other stores...
+					// any stores...
 				>
 					<Fragment>
 						<div>
 							<nav>
 								<Link to="/">Home</Link>
-								<Link to="/comp-one">Component 1</Link>
 							</nav>
 
 							{/* can place routes here */}
 							<Switch>
-								<Route path="/comp-one" component={CompOne}/>
+								<Route path="/" component={Home}/>
 								{/* other routes */}
 							</Switch>
 						</div>
 
 						{/* other stuff - ie: modal, growls, etc */}
-						<ModalWrapper/>
+						<ModalContainer/>
 					</Fragment>
 				</Provider>
 			</Router>

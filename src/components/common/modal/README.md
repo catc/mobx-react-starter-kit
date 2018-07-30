@@ -5,9 +5,9 @@ Usage is simple - just import the modal wrapper decorator and use it on your com
 
 ```tsx
 // wrapping a component with a modal
-import modalWrapper from 'components/common/modal/modal-wrapper'
+import modal from 'components/common/modal/modal-wrapper'
 
-@modalWrapper(OpenModalOptions)
+@modal(OpenModalOptions)
 @observer
 export default class YourComponent extends Component {
 	componentDidMount(){
@@ -113,6 +113,9 @@ The class you wish to pass to the `.modal-dialog` element
 
 #### `disableRouteChangeClose` - boolean (default: `false`)
 Disables automatically closing the modal when the route changes. Note that this option will have no effect if the modal is a child of a route that becomes unmounted when route changes.
+
+#### `modalDidClose` - `() => void`
+A function the wrapped component can pass to the modal decorator that is called after the modal performs a close animation. Useful for performing any actions on the wrapped component before removing modal from dom.
 
 
 ## Wrapped Component Props

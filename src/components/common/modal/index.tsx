@@ -18,11 +18,12 @@ interface ChildComponentProps {
 }
 
 export interface OpenModalOptions {
-	autoShow?: boolean;
+	autoShow?: boolean; // decorator only
+	disableRouteChangeClose?: boolean; // decorator only
 	center?: boolean;
 	animation?: string;
 	contentWrapperClass?: string;
-	disableRouteChangeClose?: boolean
+	modalDidClose?: () => void
 }
 const defaultOpenModalOptions = {
 	center: true,
@@ -41,17 +42,16 @@ function selectAnimation(animation?: string) {
 	}
 }
 
-export default function newModal(options: OpenModalOptions = {}) {
+export default function modalWrapper(options: OpenModalOptions = {}) {
 	return (ModalContent: ReactChildren) => {
 		@observer
 		class Modal extends Component<ChildComponentProps, {}> {
 			@observable isVisible = false;
-			// @observable classes = '';
 			@observable anim = selectAnimation();
-			// @observable dialogStyles = {};
 			@observable contentWrapperClass = '';
 			@observable center = false;
 			historyListen?: () => void;
+			modalDidCloseFn?: () => void
 
 			bg!: HTMLElement;
 			content!: HTMLElement;
@@ -122,6 +122,9 @@ export default function newModal(options: OpenModalOptions = {}) {
 				if (typeof options.center === 'boolean') {
 					this.center = options.center;
 				}
+				if (options.modalDidClose){
+					this.modalDidCloseFn = options.modalDidClose;
+				}
 
 				// actually display
 				await wait(0)
@@ -135,6 +138,9 @@ export default function newModal(options: OpenModalOptions = {}) {
 
 				await wait(CLOSE_DURATION)
 
+				if (this.modalDidCloseFn){
+					this.modalDidCloseFn()
+				}
 				if (this.props.close){
 					// tell parent to remove from dom (if function is provided)
 					this.props.close()
@@ -144,21 +150,22 @@ export default function newModal(options: OpenModalOptions = {}) {
 			render() {
 				return createPortal(
 					<div className="modal__wrapper">
+						{/* background */}
 						<div
 							onClick={this.closeModal}
 							className="modal__bg"
 							ref={el => this.bg = el}>
 						</div>
+
+						{/* dialog */}
 						<div
-							// ref={el => this.dialog = el}
 							className={`
 								modal__dialog
 								${this.contentWrapperClass}
 								${this.center ? 'type_center' : ''}
 							`}
-								// ${this.classes}
-							// style={this.dialogStyles}
-							>
+						>
+							{/* content */}
 							<div
 								ref={el => this.content = el}
 								className={`
@@ -166,8 +173,8 @@ export default function newModal(options: OpenModalOptions = {}) {
 									${this.anim}
 									${this.isVisible ? 'state_visible' : ''}
 								`}
-									// ${this.classes}
 							>
+								{/* wrapped component */}
 								<ModalContent
 									{...this.props}
 									showContent={this.showContent}
